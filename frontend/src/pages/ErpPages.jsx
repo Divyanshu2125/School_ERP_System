@@ -298,14 +298,27 @@ export const FeesPage = () => {
                     <td>{f.due_date}</td>
                     <td><span className={`badge ${f.status === 'Paid' ? 'badge-success' : 'badge-warning'}`}>{f.status}</span></td>
                     <td>
-                      <button 
-                        className="btn btn-danger" 
-                        style={{ padding: '6px 10px', fontSize: '0.8rem' }} 
-                        onClick={() => handleDeleteFee(f.id)}
-                        title="Delete Fee Invoice"
-                      >
-                        <Trash2 size={14} /> Delete
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        {f.status === 'Pending' && (
+                          <button
+                            className="btn btn-primary"
+                            style={{ padding: '6px 10px', fontSize: '0.8rem' }}
+                            onClick={() => {
+                              API.put(`/erp/fees/${f.id}/pay`).then(() => loadFees());
+                            }}
+                          >
+                            Mark Paid
+                          </button>
+                        )}
+                        <button 
+                          className="btn btn-danger" 
+                          style={{ padding: '6px 10px', fontSize: '0.8rem' }} 
+                          onClick={() => handleDeleteFee(f.id)}
+                          title="Delete Fee Invoice"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

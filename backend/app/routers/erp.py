@@ -67,6 +67,16 @@ def create_fee(fee: FeeCreate, db: Session = Depends(get_db), current_user = Dep
     db.refresh(new_fee)
     return new_fee
 
+@router.put("/fees/{fee_id}/pay", response_model=FeeResponse)
+def pay_fee(fee_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    fee = db.query(Fee).filter(Fee.id == fee_id).first()
+    if not fee:
+        raise HTTPException(status_code=404, detail="Fee invoice not found")
+    fee.status = "Paid"
+    db.commit()
+    db.refresh(fee)
+    return fee
+
 @router.delete("/fees/{fee_id}")
 def delete_fee(fee_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     fee = db.query(Fee).filter(Fee.id == fee_id).first()

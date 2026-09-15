@@ -416,6 +416,7 @@ const StudentsPage = () => {
                             <th>Amount</th>
                             <th>Due Date</th>
                             <th>Status</th>
+                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -426,6 +427,35 @@ const StudentsPage = () => {
                               <td style={{ fontWeight: '600' }}>${f.amount}</td>
                               <td>{f.due_date}</td>
                               <td><span className={`badge ${f.status === 'Paid' ? 'badge-success' : 'badge-warning'}`}>{f.status}</span></td>
+                              <td>
+                                {f.status === 'Pending' ? (
+                                  <button
+                                    className="btn btn-primary"
+                                    style={{ padding: '4px 12px', fontSize: '0.75rem', borderRadius: '6px' }}
+                                    onClick={async () => {
+                                      try {
+                                        await API.put(`/erp/fees/${f.id}/pay`);
+                                        alert(`Payment of $${f.amount} for "${f.title}" successful! Receipt generated.`);
+                                        openStudentProfile(selectedStudent);
+                                      } catch (err) {
+                                        alert(err.response?.data?.detail || 'Failed to submit payment');
+                                      }
+                                    }}
+                                  >
+                                    Pay Fees Now
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="btn btn-secondary"
+                                    style={{ padding: '4px 10px', fontSize: '0.75rem', borderRadius: '6px' }}
+                                    onClick={() => {
+                                      alert(`--- PAYMENT RECEIPT ---\nInvoice: INV-${f.id}\nStudent: ${selectedStudent.first_name} ${selectedStudent.last_name}\nDescription: ${f.title}\nAmount Paid: $${f.amount}\nStatus: PAID (COMPLETE)\nThank you!`);
+                                    }}
+                                  >
+                                    View Receipt
+                                  </button>
+                                )}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
